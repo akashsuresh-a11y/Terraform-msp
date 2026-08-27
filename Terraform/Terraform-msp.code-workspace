@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "Terraform project",
+			"path": "."
+		},
+		{
+			"name": "order-api",
+			"path": "../Downloads/order-api/order-api"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic"
+	}
+}
