@@ -3,3 +3,9 @@ variable "aws_region" {
   type        = string
   default     = "ap-south-1"
 }
+
+variable "db_password" {
+  description = "Master password for PostgreSQL RDS"
+  type        = string
+  sensitive   = true
+}
