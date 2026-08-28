@@ -14,6 +14,29 @@ resource "aws_ecs_task_definition" "order_api" {
       image     = "${aws_ecr_repository.order_api.repository_url}:v1"
       essential = true
 
+      environment = [
+        {
+          name  = "DB_HOST"
+          value = aws_db_instance.postgres.address
+        },
+        {
+          name  = "DB_PORT"
+          value = "5432"
+        },
+        {
+          name  = "DB_NAME"
+          value = "orders"
+        },
+        {
+          name  = "DB_USERNAME"
+          value = "postgres"
+        },
+        {
+          name  = "DB_PASSWORD"
+          value = var.db_password
+        }
+      ]
+
       portMappings = [
         {
           containerPort = 8080

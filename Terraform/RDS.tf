@@ -2,7 +2,8 @@ resource "aws_db_subnet_group" "rds" {
   name = "terraform-msp-rds-subnet-group"
 
   subnet_ids = [
-    aws_subnet.private.id
+    aws_subnet.private.id,
+    aws_subnet.private_b.id
   ]
 
   tags = {
