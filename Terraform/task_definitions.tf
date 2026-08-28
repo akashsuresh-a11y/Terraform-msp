@@ -11,7 +11,7 @@ resource "aws_ecs_task_definition" "order_api" {
   container_definitions = jsonencode([
     {
       name      = "order-api"
-      image     = "${aws_ecr_repository.order_api.repository_url}:v1"
+      image     = "${aws_ecr_repository.order_api.repository_url}:v3"
       essential = true
 
       environment = [
@@ -34,6 +34,14 @@ resource "aws_ecs_task_definition" "order_api" {
         {
           name  = "DB_PASSWORD"
           value = var.db_password
+        },
+        {
+          name  = "VALKEY_HOST"
+          value = aws_elasticache_replication_group.valkey.primary_endpoint_address
+        },
+        {
+          name  = "VALKEY_PORT"
+          value = "6379"
         }
       ]
 

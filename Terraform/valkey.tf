@@ -18,8 +18,8 @@ resource "aws_elasticache_replication_group" "valkey" {
   engine         = "valkey"
   engine_version = "7.2"
 
-  node_type            = "cache.t3.micro"
-  num_cache_clusters   = 1
+  node_type          = "cache.t3.micro"
+  num_cache_clusters = 1
 
   port = 6379
 
@@ -27,7 +27,7 @@ resource "aws_elasticache_replication_group" "valkey" {
   security_group_ids = [aws_security_group.valkey.id]
 
   automatic_failover_enabled = false
-  multi_az_enabled            = false
+  multi_az_enabled           = false
 
   at_rest_encryption_enabled = true
   transit_encryption_enabled = false
