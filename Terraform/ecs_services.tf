@@ -14,6 +14,12 @@ resource "aws_ecs_service" "order_worker" {
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
 
+  service_registries {
+    registry_arn   = aws_service_discovery_service.order_worker.arn
+    container_name = "order-worker"
+    container_port = 8081
+  }
+
   tags = {
     Name = "order-worker-service"
   }
@@ -35,6 +41,12 @@ resource "aws_ecs_service" "order_api" {
 
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
+
+  service_registries {
+    registry_arn   = aws_service_discovery_service.order_api.arn
+    container_name = "order-api"
+    container_port = 8080
+  }
 
   tags = {
     Name = "order-api-service"

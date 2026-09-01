@@ -67,3 +67,116 @@ resource "aws_iam_instance_profile" "ecs_instance" {
 
   role = aws_iam_role.ecs_instance.name
 }
+
+resource "aws_iam_role" "ecs_task" {
+  name = "terraform-msp-ecs-task-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = {
+    Name = "terraform-msp-ecs-task-role"
+  }
+}
+
+resource "aws_iam_role_policy" "order_worker_sqs" {
+  name = "terraform-msp-order-worker-sqs"
+  role = aws_iam_role.ecs_task.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ]
+
+        Resource = aws_sqs_queue.orders.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "order_api_sqs" {
+  name = "terraform-msp-order-api-sqs"
+  role = aws_iam_role.ecs_task.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Action = [
+          "sqs:SendMessage"
+        ]
+
+        Resource = aws_sqs_queue.orders.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "order_worker_messaging" {
+  name = "order-worker-messaging-policy"
+  role = aws_iam_role.ecs_task.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+
+      {
+        Effect = "Allow"
+
+        Action = [
+          "sns:Publish"
+        ]
+
+        Resource = aws_sns_topic.order_notifications.arn
+      },
+
+      {
+        Effect = "Allow"
+
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ]
+
+        Resource = aws_sqs_queue.order_notifications.arn
+      },
+
+      {
+        Effect = "Allow"
+
+        Action = [
+          "ses:SendEmail",
+          "ses:SendRawEmail"
+        ]
+
+        Resource = "*"
+      }
+    ]
+  })
+}

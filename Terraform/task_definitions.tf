@@ -11,7 +11,7 @@ resource "aws_ecs_task_definition" "order_api" {
   container_definitions = jsonencode([
     {
       name      = "order-api"
-      image     = "${aws_ecr_repository.order_api.repository_url}:v3"
+      image     = "${aws_ecr_repository.order_api.repository_url}:v10"
       essential = true
 
       environment = [
@@ -42,6 +42,10 @@ resource "aws_ecs_task_definition" "order_api" {
         {
           name  = "VALKEY_PORT"
           value = "6379"
+        },
+        {
+          name  = "SQS_QUEUE_URL"
+          value = aws_sqs_queue.orders.url
         }
       ]
 
@@ -80,11 +84,12 @@ resource "aws_ecs_task_definition" "order_worker" {
   memory = "512"
 
   execution_role_arn = aws_iam_role.ecs_task_execution.arn
+  task_role_arn      = aws_iam_role.ecs_task.arn
 
   container_definitions = jsonencode([
     {
       name      = "order-worker"
-      image     = "${aws_ecr_repository.order_worker.repository_url}:v1"
+      image     = "${aws_ecr_repository.order_worker.repository_url}:v6"
       essential = true
 
       portMappings = [

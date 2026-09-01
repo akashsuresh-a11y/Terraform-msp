@@ -6,13 +6,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderWorkerService {
 
+    private final SnsPublisherService snsPublisherService;
+
+    public OrderWorkerService(SnsPublisherService snsPublisherService) {
+        this.snsPublisherService = snsPublisherService;
+    }
+
     public String processOrder(OrderRequest request) {
 
-        return "Order processed by worker for "
-                + request.getCustomer()
-                + " - "
-                + request.getProduct()
-                + " x "
-                + request.getQuantity();
+        String message =
+                "Order processed for customer: "
+                        + request.getCustomer()
+                        + ", Product: "
+                        + request.getProduct()
+                        + ", Quantity: "
+                        + request.getQuantity();
+
+        snsPublisherService.publish(message);
+
+        return message;
     }
 }
